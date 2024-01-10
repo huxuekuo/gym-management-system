@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.codec.Encoder;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
@@ -60,7 +61,7 @@ public class FastJsonConfiguration extends WebMvcConfigurationSupport
         //将long型转换成字符串输出，防止过长丢失精度
         SerializeConfig.getGlobalInstance().put(Long.class, ToStringSerializer.instance);
         fastJsonConfig.setSerializeConfig(SerializeConfig.globalInstance);
-
+        fastJsonConfig.setSerializerFeatures(SerializerFeature.PrettyFormat);
         fastConverter.setFastJsonConfig(fastJsonConfig);
         fastConverter.setDefaultCharset(StandardCharsets.UTF_8);
 
@@ -77,4 +78,12 @@ public class FastJsonConfiguration extends WebMvcConfigurationSupport
     protected void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(fastJsonMessageConverters());
     }
+
+    @Bean
+    public Jackson2ObjectMapperFactoryBean getJackson2ObjectMapperFactoryBean(){
+        Jackson2ObjectMapperFactoryBean jackson2ObjectMapperFactoryBean = new Jackson2ObjectMapperFactoryBean();
+        jackson2ObjectMapperFactoryBean.setFailOnEmptyBeans(false);
+        return jackson2ObjectMapperFactoryBean;
+    }
+
 }
