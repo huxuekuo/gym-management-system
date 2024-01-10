@@ -4,14 +4,6 @@ spring:
     username: root
     password: yiqizou89.
     driver-class-name: com.mysql.cj.jdbc.Driver
-
-  thymeleaf:
-    cache: false
-
-
-#server:
-#  port: 8888
-
 mybatis:
   #  config-location: classpath:mybatis/mybatis-config.xml
   mapper-locations: classpath:mybatis/mapper/*.xml

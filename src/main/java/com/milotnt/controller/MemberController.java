@@ -1,11 +1,16 @@
 package com.milotnt.controller;
 
+import com.milotnt.consts.ConstsEnum;
 import com.milotnt.pojo.Member;
 import com.milotnt.service.MemberService;
+import com.milotnt.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,7 +22,7 @@ import java.util.Random;
  * @date 2021/8/16
  */
 
-@Controller
+@RestController
 @RequestMapping("/member")
 public class MemberController {
 
@@ -25,22 +30,15 @@ public class MemberController {
     private MemberService memberService;
 
     //查询会员
-    @RequestMapping("/selMember")
-    public String selectMember(Model model) {
+    @RequestMapping(value = "/selMember" )
+    public Object selectMember() {
         List<Member> memberList = memberService.findAll();
-        model.addAttribute("memberList", memberList);
-        return "selectMember";
-    }
-
-    //跳转新增会员页面
-    @RequestMapping("/toAddMember")
-    public String toAddMember() {
-        return "addMember";
+        return R.OK(memberList);
     }
 
     //新增会员
     @RequestMapping("/addMember")
-    public String addMember(Member member) {
+    public Object addMember(@RequestBody Member member) {
         //会员账号&卡号随机生成
         Random random = new Random();
         String account1 = "2021";
@@ -66,50 +64,38 @@ public class MemberController {
 
         memberService.insertMember(member);
 
-        return "redirect:selMember";
-
+        return R.OK(true);
     }
 
     //删除会员
     @RequestMapping("/delMember")
-    public String deleteMember(Integer memberAccount) {
+    public Object deleteMember(@RequestParam Integer memberAccount) {
         memberService.deleteByMemberAccount(memberAccount);
-        return "redirect:selMember";
+        return R.OK(true);
     }
 
     //跳转会员修改页面
     @RequestMapping("/toUpdateMember")
-    public String toUpdateMember(Integer memberAccount, Model model) {
+    public Object toUpdateMember(@RequestParam Integer memberAccount) {
         List<Member> memberList = memberService.selectByMemberAccount(memberAccount);
-        model.addAttribute("memberList", memberList);
-        return "updateMember";
+        return R.OK(memberList);
     }
 
     //修改会员信息
     @RequestMapping("/updateMember")
-    public String updateMember(Member member) {
+    public Object updateMember(@RequestBody Member member) {
         memberService.updateMemberByMemberAccount(member);
-        return "redirect:selMember";
-    }
-
-
-    //跳转会员卡查询页面
-    @RequestMapping("/toSelByCard")
-    public String toSelectByCardId() {
-        return "selectByMemberAccount";
+        return R.OK(true);
     }
 
     //根据会员卡号查询
     @RequestMapping("/selByCard")
-    public String selectByCardId(Model model, Integer memberAccount) {
+    public Object selectByCardId(@RequestParam Integer memberAccount) {
         List<Member> memberList = memberService.selectByMemberAccount(memberAccount);
         if (memberList != null) {
-            model.addAttribute("memberList", memberList);
-        } else {
-            String message = "会员卡号不存在！";
-            model.addAttribute("noMessage", message);
+            return R.OK(memberList);
         }
-        return "selectByMemberAccount";
+        return R.Fail(ConstsEnum.MEMBER_NOT_EXIST);
     }
 
 }
