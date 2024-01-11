@@ -17,10 +17,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-/**
- * @author MiloTnT [milotntspace@gmail.com]
- * @date 2021/8/16
- */
 
 @RestController
 @RequestMapping("/member")
